@@ -6,7 +6,7 @@
 import warnings
 import numpy as np
 import pandas as pd
-import copy
+# import copy
 from scipy.spatial.distance import euclidean
 from sklearn.linear_model import LinearRegression, LogisticRegression, Ridge
 from sklearn.preprocessing import PolynomialFeatures
@@ -26,19 +26,21 @@ def read_data(path):
     X = pd.get_dummies(X)
     T = df['T']
     Y = df['Y']
-    return df,T,Y
+    return df, T, Y
 
-def Creating_threshold(T_values,T,Threshold):
-    cnt=1
+
+def Creating_threshold(T_values, T, Threshold):
+    cnt = 1
     for i in T_values:
         if i < Threshold:
-            T[cnt]=0
+            T[cnt] = 0
         else:
-            T[cnt]=1
-        cnt=1+cnt
+            T[cnt] = 1
+        cnt = 1 + cnt
     return T
 
-def propensity_score_LR(df): #calculates propensity score by GLM estimate
+
+def propensity_score_LR(df):  # calculates propensity score by GLM estimate
     X = df.iloc[:, :9]
     T = df['T']
     model = LogisticRegression()
@@ -46,59 +48,65 @@ def propensity_score_LR(df): #calculates propensity score by GLM estimate
     prop = np.asarray(model.predict_proba(X))
     return prop
 
+
 ### need to fix below###
 
-def S_learner(df): #calculates ATE by S-learner
+def S_learner(df):  # calculates ATE by S-learner
     df_copy = df.copy()
-    X = df_copy.iloc[:,:-1]
+    X = df_copy.iloc[:, :-1]
     y = df_copy['Y']
-    model = LinearRegression().fit(X,y)
-    df_2 = df_copy[df_copy['T']==1]
-    pred_1 = model.predict(df_2.iloc[:,:-1])
+    model = LinearRegression().fit(X, y)
+    df_2 = df_copy[df_copy['T'] == 1]
+    pred_1 = model.predict(df_2.iloc[:, :-1])
     df_2["T"] = 0
-    pred_2 = model.predict(df_2.iloc[:,:-1])
-    ATE = (float(sum(pred_1))/float(len(pred_1)))-(float(sum(pred_2))/float(len(pred_2)))
+    pred_2 = model.predict(df_2.iloc[:, :-1])
+    ATE = (float(sum(pred_1)) / float(len(pred_1))) - (float(sum(pred_2)) / float(len(pred_2)))
     return ATE
 
-def T_learner(df): #calculates ATE by T-learner
+
+def T_learner(df):  # calculates ATE by T-learner
     df_copy = df.copy()
     model_1 = LinearRegression()
     model_2 = LinearRegression()
-    df_1 = df_copy[df_copy["T"]==1].drop(["T"],axis=1)
-    df_2 = df_copy[df_copy["T"]==0].drop(["T"],axis=1)
-    model_1.fit(df_1.iloc[:,:-1],df_1.iloc[:,-1])
-    model_2.fit(df_2.iloc[:,:-1],df_2.iloc[:,-1])
-    pred_1 = model_1.predict(df_1.iloc[:,:-1])
-    pred_2 = model_2.predict(df_1.iloc[:,:-1])
-    ATE = (float(sum(pred_1))/float(len(pred_1)))-(float(sum(pred_2))/float(len(pred_2)))
+    df_1 = df_copy[df_copy["T"] == 1].drop(["T"], axis=1)
+    df_2 = df_copy[df_copy["T"] == 0].drop(["T"], axis=1)
+    model_1.fit(df_1.iloc[:, :-1], df_1.iloc[:, -1])
+    model_2.fit(df_2.iloc[:, :-1], df_2.iloc[:, -1])
+    pred_1 = model_1.predict(df_1.iloc[:, :-1])
+    pred_2 = model_2.predict(df_1.iloc[:, :-1])
+    ATE = (float(sum(pred_1)) / float(len(pred_1))) - (float(sum(pred_2)) / float(len(pred_2)))
     return ATE
 
-def Matching(df): #calculates ATE by matching
-    t_1 = df[df['T'] == 1].drop(["T"],axis=1).values
-    t_0 = df[df['T'] == 0].drop(["T"],axis=1).values
+
+def Matching(df):  # calculates ATE by matching
+    t_1 = df[df['T'] == 1].drop(["T"], axis=1).values
+    t_0 = df[df['T'] == 0].drop(["T"], axis=1).values
     t_2 = []
     for row in t_1:
-        min_dist = 10000000000000 #heuristically
-        val = 100000000000000 #heuristically
+        min_dist = 10000000000000  # heuristically
+        val = 100000000000000  # heuristically
         for sub_row in t_0:
-            dist = euclidean(row[:-1],sub_row[:-1])
-            if dist<min_dist:
+            dist = euclidean(row[:-1], sub_row[:-1])
+            if dist < min_dist:
                 min_dist = dist
-                val = row[-1]-sub_row[-1]
+                val = row[-1] - sub_row[-1]
         t_2.append(val)
-    ATT = float(sum(t_2))/float(len(t_2))
+    ATT = float(sum(t_2)) / float(len(t_2))
     return ATT
 
-def stratification(data):#calculates ATE by stratification
+
+def stratification(data):  # calculates ATE by stratification
     ate_scores = []
     data = data.sort_values(by=['ps_1'])
-    data['stratification_bin'] = pd.qcut(data['ps_1'], q=STRATIFICATION_BINS, labels=[i for i in range(1, STRATIFICATION_BINS + 1)], retbins=False)
+    data['stratification_bin'] = pd.qcut(data['ps_1'], q=STRATIFICATION_BINS,
+                                         labels=[i for i in range(1, STRATIFICATION_BINS + 1)], retbins=False)
     is_rct = 1
     for bin in range(1, STRATIFICATION_BINS + 1):
         inner_bin_data = copy.deepcopy(data[data['stratification_bin'] == bin])
         ate_scores.append(inverse_propensity_score(inner_bin_data, is_rct))
     ate = np.nanmean(ate_scores)
     return ate
+
 
 def get_group_effect(data, is_treatment=1, is_rct=1):
     T = data['T']
@@ -121,6 +129,7 @@ def get_group_effect(data, is_treatment=1, is_rct=1):
                 group_effect = ((((1 - T) * y) / (1 - ps)).sum()) / n
     return group_effect
 
+
 def inverse_propensity_score(data, is_rct=1):
     treatment = 1
     control = 0
@@ -134,21 +143,23 @@ def inverse_propensity_score(data, is_rct=1):
         ate = np.nan
     return ate
 
+
 ######################################################### Other team project#############################################################
-def propensity_score_lr_predictor(X,T):
-    clf = LogisticRegression(random_state=0,max_iter=10000, solver='lbfgs',multi_class='multinomial').fit(X, T)    
+def propensity_score_lr_predictor(X, T):
+    clf = LogisticRegression(random_state=0, max_iter=10000, solver='lbfgs', multi_class='multinomial').fit(X, T)
     ps_score = np.asarray(clf.predict_proba(X))
-    
+
     T_pred = clf.predict(X)
-    #print('Accuracy LR: ' + str(accuracy_score(T,T_pred)))
-    
+    # print('Accuracy LR: ' + str(accuracy_score(T,T_pred)))
+
     return ps_score
+
 
 def ridge_linear_regression(adj_bin_data, with_ps=True):
     if with_ps:
         X = adj_bin_data.drop(columns=['Y', 'ps_0', 'ps_1'])
     else:
-        X =  adj_bin_data.drop(columns=['Y'])
+        X = adj_bin_data.drop(columns=['Y'])
 
     y = adj_bin_data['Y']
 
@@ -170,6 +181,7 @@ def ridge_linear_regression(adj_bin_data, with_ps=True):
 
     return T_coef, y_pred
 
+
 def ridge_non_linear_regression(adj_bin_data):
     X = adj_bin_data.drop(columns=['Y', 'ps_0', 'ps_1'])
     y = adj_bin_data['Y']
@@ -190,6 +202,7 @@ def ridge_non_linear_regression(adj_bin_data):
 
     # print('RMSE_non_linear: ' + str(math.sqrt(mean_squared_error(y,y_pred))))
     return T_coef_non_linear, y_pred
+
 
 def ridge_non_linear_regression_robust(adj_bin_data):
     X = adj_bin_data.drop(columns=['Y', 'ps_0', 'ps_1'])
@@ -214,6 +227,7 @@ def ridge_non_linear_regression_robust(adj_bin_data):
     y_pred_control = clf_control.predict(X_poly)
     return y_pred_treated, y_pred_control
 
+
 def calc_doubly_robust_sum(bin_data):
     n = bin_data.shape[0]
     T = bin_data['T']
@@ -221,19 +235,20 @@ def calc_doubly_robust_sum(bin_data):
     treatment_prediction = bin_data['treated_prediction']
     control_prediction = bin_data['control_prediction']
     y = bin_data['imdb_score']
-    
-    left_hand_sum = ((T*y/ps)-((T-ps)/ps)*treatment_prediction).sum()
-    right_hand_sum = ((((1-T)*y)/(1-ps))+((T-ps)/(1-ps))*control_prediction).sum()
-    sum = (left_hand_sum - right_hand_sum)/n
+
+    left_hand_sum = ((T * y / ps) - ((T - ps) / ps) * treatment_prediction).sum()
+    right_hand_sum = ((((1 - T) * y) / (1 - ps)) + ((T - ps) / (1 - ps)) * control_prediction).sum()
+    sum = (left_hand_sum - right_hand_sum) / n
     return sum
 
-def doubly_robust_estimator(bin_data):    
-    bin_data_treated = bin_data[bin_data['T']==1]
-    bin_data_control = bin_data[bin_data['T']==0]
-    
-    if (bin_data_treated.shape[0] >= THRESHOLD_S_DR and bin_data_control.shape[0] >= THRESHOLD_S_DR):  
-        treated_predictions,control_predictions = ridge_non_linear_regression_robust(bin_data)                  
-                          
+
+def doubly_robust_estimator(bin_data):
+    bin_data_treated = bin_data[bin_data['T'] == 1]
+    bin_data_control = bin_data[bin_data['T'] == 0]
+
+    if (bin_data_treated.shape[0] >= THRESHOLD_S_DR and bin_data_control.shape[0] >= THRESHOLD_S_DR):
+        treated_predictions, control_predictions = ridge_non_linear_regression_robust(bin_data)
+
         bin_data['treated_prediction'] = treated_predictions
         bin_data['control_prediction'] = control_predictions
 
@@ -242,29 +257,27 @@ def doubly_robust_estimator(bin_data):
         ate = np.nan
     return ate
 
+
 def main():
     stratification_ate_list = list()
     path = "Final_Data.csv"
-    data,T,Y = read_data(path)
+    data, T, Y = read_data(path)
     X = data.iloc[:, :9]
-    T_values=data.iloc[:,9]
-    file = open("scores.txt","w")
-    for Threshold in range(10,23):
-        file.write('%d \n' % Threshold) 
-        T = Creating_threshold(T_values,T,Threshold)
+    T_values = data.iloc[:, 9]
+    file = open("scores.txt", "w")
+    for Threshold in range(10, 23):
+        file.write('%d \n' % Threshold)
+        T = Creating_threshold(T_values, T, Threshold)
         adj_data = pd.concat([X, T, Y], axis=1)
-        ##############################
-        prop2 = propensity_score_lr_predictor(X,T)
-        ################################
         prop = propensity_score_LR(adj_data)
-        propensity_score = pd.DataFrame(data={'ps_0':prop[:,0],'ps_1':prop[:,1]},columns=['ps_0','ps_1'])
+        propensity_score = pd.DataFrame(data={'ps_0': prop[:, 0], 'ps_1': prop[:, 1]}, columns=['ps_0', 'ps_1'])
         propensity_score.index = np.arange(1, len(propensity_score) + 1)
-        propensity_score.shift(2, axis = 0) 
+        propensity_score.shift(2, axis=0)
         adj_data = pd.concat([X, propensity_score, T, Y], axis=1)
-        IPW_measure=inverse_propensity_score(adj_data,0)
+        IPW_measure = inverse_propensity_score(adj_data, 0)
         file.write("IPW = %0.8f\n" % IPW_measure)
-        stratification_ate_list.append(stratification(adj_data))
-        file.write("Stratification = %0.8f\n" % stratification_ate_list[0])
+        stratification_ate = (stratification(adj_data))
+        file.write("Stratification = %0.8f\n" % stratification_ate)
         s_learner = S_learner(adj_data)
         file.write("S-learner = %0.8f\n" % s_learner)
         t_learner = T_learner(adj_data)
@@ -272,6 +285,7 @@ def main():
         """matching=Matching(adj_data)
         file.write("Matching = %0.8f\n" % matching)"""
     file.close()
+
 
 if __name__ == "__main__":
     main()
