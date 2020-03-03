@@ -1,0 +1,8 @@
+**/venv/
+# Pycharm
+**/.idea/workspace.xml
+*/.idea/dictionaries/*
+*/.idea/libraries/*
+**/.idea/dataSources.xml
+
+*.pyc
