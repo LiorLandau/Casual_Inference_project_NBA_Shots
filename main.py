@@ -9,10 +9,9 @@ import pandas as pd
 import copy
 from scipy.spatial.distance import euclidean
 from sklearn.linear_model import LinearRegression, LogisticRegression, Ridge
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import PolynomialFeatures
-from sklearn.metrics import mean_squared_error
-import math
-from scipy import stats
+from sklearn.naive_bayes import GaussianNB
 
 warnings.filterwarnings("ignore")
 STRATIFICATION_BINS = 15
@@ -56,7 +55,7 @@ def S_learner(df):  # calculates ATE by S-learner
     df_copy = df.copy()
     X = df_copy.iloc[:, :-1]
     y = df_copy['Y']
-    model = LinearRegression().fit(X, y)
+    model= GaussianNB().fit(X, y)
     df_2 = df_copy[df_copy['T'] == 1]
     pred_1 = model.predict(df_2.iloc[:, :-1])
     df_2["T"] = 0
@@ -67,8 +66,8 @@ def S_learner(df):  # calculates ATE by S-learner
 
 def T_learner(df):  # calculates ATE by T-learner
     df_copy = df.copy()
-    model_1 = LinearRegression()
-    model_2 = LinearRegression()
+    model_1 = RandomForestClassifier()
+    model_2 = RandomForestClassifier()
     df_1 = df_copy[df_copy["T"] == 1].drop(["T"], axis=1)
     df_2 = df_copy[df_copy["T"] == 0].drop(["T"], axis=1)
     model_1.fit(df_1.iloc[:, :-1], df_1.iloc[:, -1])
@@ -242,7 +241,7 @@ def main():
     X = data.iloc[:, :9]
     T_values = data.iloc[:, 9]
     file = open("scores.txt", "w")
-    for Threshold in range(10, 23):
+    for Threshold in range(7, 20):
         file.write('%d \n' % Threshold)
         T = Creating_threshold(T_values, T, Threshold)
         adj_data = pd.concat([X, T, Y], axis=1)
