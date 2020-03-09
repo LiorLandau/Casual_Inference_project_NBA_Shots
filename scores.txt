@@ -1,0 +1,84 @@
+7 
+IPW = 0.04256289
+Stratification = 0.05539051
+S-learner = 0.06953151
+T-learner = 0.27109154
+Doubly Robust = 0.03431155
+8 
+IPW = 0.01095967
+Stratification = 0.03337382
+S-learner = 0.12323908
+T-learner = 0.27749063
+Doubly Robust = 0.01284438
+9 
+IPW = -0.00000747
+Stratification = 0.03195669
+S-learner = 0.05082544
+T-learner = 0.27112314
+Doubly Robust = 0.00270892
+10 
+IPW = 0.01155572
+Stratification = 0.02505235
+S-learner = 0.06482079
+T-learner = 0.27166070
+Doubly Robust = 0.01876933
+11 
+IPW = 0.01618693
+Stratification = 0.02448339
+S-learner = 0.03178799
+T-learner = 0.27648462
+Doubly Robust = 0.01649045
+12 
+IPW = 0.00511050
+Stratification = 0.01433615
+S-learner = 0.02865330
+T-learner = 0.26833811
+Doubly Robust = 0.00808064
+13 
+IPW = 0.00015896
+Stratification = 0.00963034
+S-learner = 0.01748280
+T-learner = 0.27195467
+Doubly Robust = 0.00494971
+14 
+IPW = 0.00360535
+Stratification = 0.01077640
+S-learner = 0.01708767
+T-learner = 0.26866642
+Doubly Robust = 0.00739526
+15 
+IPW = 0.00655055
+Stratification = 0.01815031
+S-learner = 0.01572839
+T-learner = 0.27551795
+Doubly Robust = 0.00133106
+16 
+IPW = 0.00019129
+Stratification = 0.00817899
+S-learner = 0.01349248
+T-learner = 0.26971977
+Doubly Robust = -0.00608390
+17 
+IPW = 0.00226865
+Stratification = 0.00979606
+S-learner = 0.02213312
+T-learner = 0.27249399
+Doubly Robust = 0.00334646
+18 
+IPW = 0.00352700
+Stratification = 0.01403387
+S-learner = 0.04285714
+T-learner = 0.27394958
+Doubly Robust = -0.00086281
+19 
+IPW = -0.00695806
+Stratification = -0.01204954
+S-learner = 0.00967541
+T-learner = 0.25280899
+Doubly Robust = -0.00408883
+20 
+IPW = -0.00536256
+Stratification = -0.01695219
+S-learner = -0.00954907
+T-learner = 0.26259947
+Doubly Robust = -0.00509271
