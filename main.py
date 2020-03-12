@@ -272,8 +272,8 @@ def main():
         file.write("S-learner = %0.8f\n" % s_learner)
         t_learner = T_learner(adj_data)
         file.write("T-learner = %0.8f\n" % t_learner)
-        """matching=Matching(adj_data)
-        file.write("Matching = %0.8f\n" % matching)"""
+        matching=Matching(adj_data)
+        file.write("Matching = %0.8f\n" % matching)
         adj_data2=adj_data.copy()
         doubly_robust_ate = doubly_robust(adj_data)
         file.write("Doubly Robust = %0.8f\n" % doubly_robust_ate)
