@@ -2,83 +2,83 @@
 IPW = 0.04256289
 Stratification = 0.05539051
 S-learner = 0.06953151
-T-learner = 0.27109154
-Doubly Robust = 0.03431155
+T-learner = 0.27066086
+Doubly Robust = 0.03371960
 8 
 IPW = 0.01095967
 Stratification = 0.03337382
 S-learner = 0.12323908
-T-learner = 0.27749063
-Doubly Robust = 0.01284438
+T-learner = 0.27992298
+Doubly Robust = 0.01400993
 9 
 IPW = -0.00000747
 Stratification = 0.03195669
 S-learner = 0.05082544
-T-learner = 0.27112314
-Doubly Robust = 0.00270892
+T-learner = 0.27085250
+Doubly Robust = 0.00343575
 10 
 IPW = 0.01155572
 Stratification = 0.02505235
 S-learner = 0.06482079
-T-learner = 0.27166070
-Doubly Robust = 0.01876933
+T-learner = 0.27342054
+Doubly Robust = 0.01331145
 11 
 IPW = 0.01618693
 Stratification = 0.02448339
 S-learner = 0.03178799
-T-learner = 0.27648462
-Doubly Robust = 0.01649045
+T-learner = 0.27500161
+Doubly Robust = 0.01850603
 12 
 IPW = 0.00511050
 Stratification = 0.01433615
 S-learner = 0.02865330
-T-learner = 0.26833811
-Doubly Robust = 0.00808064
+T-learner = 0.27227794
+Doubly Robust = 0.00756524
 13 
 IPW = 0.00015896
 Stratification = 0.00963034
 S-learner = 0.01748280
-T-learner = 0.27195467
-Doubly Robust = 0.00494971
+T-learner = 0.26531769
+Doubly Robust = 0.00557984
 14 
 IPW = 0.00360535
 Stratification = 0.01077640
 S-learner = 0.01708767
-T-learner = 0.26866642
-Doubly Robust = 0.00739526
+T-learner = 0.27609584
+Doubly Robust = 0.00680255
 15 
 IPW = 0.00655055
 Stratification = 0.01815031
 S-learner = 0.01572839
-T-learner = 0.27551795
-Doubly Robust = 0.00133106
+T-learner = 0.27671114
+Doubly Robust = 0.00264296
 16 
 IPW = 0.00019129
 Stratification = 0.00817899
 S-learner = 0.01349248
-T-learner = 0.26971977
-Doubly Robust = -0.00608390
+T-learner = 0.27426051
+Doubly Robust = -0.00697356
 17 
 IPW = 0.00226865
 Stratification = 0.00979606
 S-learner = 0.02213312
-T-learner = 0.27249399
-Doubly Robust = 0.00334646
+T-learner = 0.26639936
+Doubly Robust = 0.00356761
 18 
 IPW = 0.00352700
 Stratification = 0.01403387
 S-learner = 0.04285714
-T-learner = 0.27394958
-Doubly Robust = -0.00086281
+T-learner = 0.28193277
+Doubly Robust = -0.00140334
 19 
 IPW = -0.00695806
 Stratification = -0.01204954
 S-learner = 0.00967541
-T-learner = 0.25280899
-Doubly Robust = -0.00408883
+T-learner = 0.26935081
+Doubly Robust = -0.00420180
 20 
 IPW = -0.00536256
 Stratification = -0.01695219
 S-learner = -0.00954907
-T-learner = 0.26259947
-Doubly Robust = -0.00509271
+T-learner = 0.25517241
+Doubly Robust = -0.00513212

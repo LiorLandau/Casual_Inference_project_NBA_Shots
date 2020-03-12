@@ -11,6 +11,9 @@ from scipy.spatial.distance import euclidean
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.naive_bayes import GaussianNB
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+
 
 ###Global Varaibles###
 warnings.filterwarnings("ignore")
@@ -54,7 +57,16 @@ def propensity_score_LR(df): #GLM-family binomial (logistic regression)
     return prop
 
 
+def log_liklihood(df): #helper funnction for sensitivity
+    X=df.drop(columns=['Y'])
+    y = df['Y']
+    X = df.iloc[:, :9]
+    model = LogisticRegression()
+    fit = model.fit(X, y)
+    T_C = fit.coef_[0][-1]
+    y_pred = model.predict(X)
 
+    return T_C, y_pred
 
 
 def S_learner(df):  # calculates ATE by S-learner
@@ -197,6 +209,45 @@ def doubly_robust(df): #Doubly Robust function-ATE
 
 ####################################################
 
+##########################sensitivity annalysis###################
+
+
+def sensitivity_analysis(df, T_C,th):
+    df['noise'] = df['Y'] - df['pred_y']
+    var1 = df[df['T'] == 1]['noise'].var()
+    var0 = df[df['T'] == 0]['noise'].var()
+    Lambdas= np.arange(start=-4, stop=4 + 0.05, step=0.05)
+    ATEs = []
+    for Lambda in Lambdas:
+        r1= Lambda * var1
+        b1c = df['ps_0'] * r1
+        b1 = b1c.mean()
+        r0 = Lambda * var0
+        b0c = df['ps_1'] * r0.mean()
+        b0 = b0c.mean()
+        fixed_ate = T_C - b1 - b0
+        ATEs.append(fixed_ate)
+    ate = min(np.abs(ATEs))
+    if ate in ATEs :
+        id1= ATEs .index(ate)
+    else:
+        id1 = ATEs.index(ate * (-1))
+
+    TP = Lambdas[id1]
+    plt.plot(Lambdas,ATEs)
+    plt.ylim(-1.25,1.25)
+    plt.xlim(-(4+0.05),4+0.05)
+    plt.xlabel('Lambda')
+    plt.ylabel('Fixed ATE')
+    plt.axhline(y=0,linestyle=':')
+    plt.savefig("threshold" + str(th) + ".png")
+    plt.close()
+    r1f = TP*var1
+    r0f = TP*var0
+
+    return r0f, r1f
+
+#########################main################################################
 def main():
 
     path = "Final_Data.csv"
@@ -223,8 +274,14 @@ def main():
         file.write("T-learner = %0.8f\n" % t_learner)
         """matching=Matching(adj_data)
         file.write("Matching = %0.8f\n" % matching)"""
+        adj_data2=adj_data.copy()
         doubly_robust_ate = doubly_robust(adj_data)
-        file.write("Doubly Robust = %0.8f\n" % doubly_robust_ate )
+        file.write("Doubly Robust = %0.8f\n" % doubly_robust_ate)
+        T_C, y_pred = log_liklihood(adj_data2)
+        adj_data2['pred_y'] = y_pred
+        sensitivity_analysis(adj_data2, T_C,Threshold)
+
+
     file.close()
 
 
